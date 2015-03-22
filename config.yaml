@@ -1,0 +1,10 @@
+---
+contentdir: "content"
+layoutdir: "layouts"
+publishdir: "public"
+indexes:
+  category: "categories"
+baseurl: "http://xjaros1.github.io/pb071"
+title: "PB071 semminar site"
+canonifyurls: true
+...
