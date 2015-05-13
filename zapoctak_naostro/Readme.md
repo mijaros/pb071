@@ -2,27 +2,27 @@ Zadání zápočtového příkladu
 ===========================
 
 ## Podmínky
- * Čas na vypracování: _50 minut_
+ * Čas na vypracování: __50 minut__
  * Povolené pomůcky:
    * _Dokumentace standardní knihovny_
    * _Vaše zdrojové kódy ze cvičení i domácích úkolů_
    * _Slidy z přednášek_
    * _Další libovolné dokumenty_
- * _Jakákoliv komunikace se živou osobou, nebo použití audiovizuální pomůcky je zakázáno_
+ * __Jakákoliv komunikace se živou osobou, nebo použití audiovizuální pomůcky je zakázáno__
 
 ## Zadání
 Vaším úkolem je napsat spustitelný program, který níže popsaným způsobem zpracuje relační data, popisující
 stav skladu materiálu.
 
-Vstupními soubory pro Váš program nechť jsou dva soubory __items.csv__ a __movements.csv__
+Vstupními soubory pro Váš program nechť jsou dva soubory _items.csv_ a _movements.csv_
 ve formátu [CSV - comma-separated values](http://cs.wikipedia.org/wiki/CSV).
 
-_Items.csv_ informace o naskladněných položkách obsahuje:
+__Items.csv__ informace o naskladněných položkách obsahuje:
   * identifikátor - celé nezáporné číslo, primární klíč v db
   * název produktu - řetězec, který neobsahuje čárrku či znak konce řádku
   * cena za jednotku - nezáporné celé číslo popisující cenu za prodej jednotky
 
-_Movements.csv_ informace o pohybech ve skladu:
+__Movements.csv__ informace o pohybech ve skladu:
   * Identifikátor transakce - primární klíč tabulky
   * Identifikátor z tabulky items - cizí klíč
   * Datum pohybu
@@ -47,6 +47,9 @@ Na závěr váš program vypíše celkovou hodnotu skladu - tedy sumu veškerýc
 Celková cena: ${cena}
 ```
 
+Je zcela na vašem vlastním rozhodnutí, jakým způsobem budete ukládat data, nicméně doporučuji tímto začít vaši implementaci.
+Dbejte na zásady bezpečného programování. Váš program by neměl generovat __memory leaky__. Jak se bude program chovat v případě 
+chyby je čistě na vašem uvážení, nicméně veškeré chování by mělo být definováno.
 
 ### Items.csv
 ```
