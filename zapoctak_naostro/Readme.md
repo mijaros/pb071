@@ -1,7 +1,7 @@
 Zadání zápočtového příkladu
 ===========================
 
-##Podmínky
+## Podmínky
  * Čas na vypracování: _50 minut_
  * Povolené pomůcky:
    * _Dokumentace standardní knihovny_
@@ -10,7 +10,7 @@ Zadání zápočtového příkladu
    * _Další libovolné dokumenty_
  * _Jakákoliv komunikace se živou osobou, nebo použití audiovizuální pomůcky je zakázáno_
 
-##Zadání
+## Zadání
 Vaším úkolem je napsat spustitelný program, který níže popsaným způsobem zpracuje relační data, popisující
 stav skladu materiálu.
 
@@ -48,14 +48,14 @@ Celková cena: ${cena}
 ```
 
 
-###Items.csv
+### Items.csv
 ```
 0,bowl of petunias,42
 1,Deep thought,10000000
 2,Sperm Whale, 1200
 ```
 
-###Movements.csv
+### Movements.csv
 ```
 0,1,1.1.2001,1
 1,0,1.1.2001,10
@@ -67,7 +67,7 @@ Celková cena: ${cena}
 7,0,7.1.2004,100
 ```
 
-###Výstup
+### Výstup
 
 ```
 0 - bowl of petunias: 131 5502
