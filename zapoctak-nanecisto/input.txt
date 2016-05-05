@@ -1,0 +1,7 @@
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+mjaros    1415  0.0  0.0  34100  4552 ?        Ss   11:46   0:00 /usr/lib/systemd/systemd --user
+mjaros    1416  0.0  0.0 105884  2252 ?        S    11:46   0:00 (sd-pam)
+mjaros    1426  0.0  0.0 353824 15012 ?        SLl  11:46   0:02 /usr/bin/gnome-keyring-daemon --daemonize --login
+mjaros    1430  0.0  0.0 197300  5464 tty2     Ssl+ 11:46   0:00 /usr/lib/gdm/gdm-x-session --run-script gnome-session
+mjaros    1432  1.8  1.0 706284 172536 tty2    Sl+  11:46   0:48 /usr/lib/xorg-server/Xorg vt2 -displayfd 3 -auth /run/user/1000/gdm/Xauthority -nolisten tcp -background none -noreset -keept
+mjaros    1439  0.0  0.0 576220 13500 tty2     Sl+  11:46   0:00 /usr/lib/gnome-session/gnome-session-binary
