@@ -1,4 +1,3 @@
-Parsed
 Highest cpu usage had 1432, /usr/lib/xorg-server/Xorg vt2 -displayfd 3 -auth /run/user/1000/gdm/Xauthority -nolisten tcp -background none -noreset -keept
-Highest memory usage had 1415, /usr/lib/systemd/systemd --user
+Highest memory usage had 1432, /usr/lib/systemd/systemd --user
 	mjaros: CPU=1.800000, MEM=1.000000, TIME=50
