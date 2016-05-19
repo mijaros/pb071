@@ -1,0 +1,3 @@
+Frantisek Novak: Datum narozeni=12.2.1984 Pratele=(Josef Novak)
+Josef Novak: Datum narozeni=12.2.1985 Pratele=(Frantisek Novak, Karel Novotny)
+Karel Novotny: Datum narozeni=12.2.1992 Pratele=(Josef Novak)
