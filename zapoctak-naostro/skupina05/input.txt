@@ -1,7 +1,7 @@
 F1:Frantisek Novak
-F1.birthDate=12.2.1984
+F1.birthDate:12.2.1984
 Josef:Josef Novak
-Josef.birthDate=12.2.1985
+Josef.birthDate:12.2.1985
 Karel:Karel Novotny
 Karel.birthDate:12.2.1992
 Karel.friend:Josef
