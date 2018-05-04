@@ -1,0 +1,6 @@
+p3: p2
+	echo p3
+p2: p1 
+	echo p2
+p1: 
+	echo p1

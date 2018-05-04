@@ -1,0 +1,263 @@
+\documentclass{beamer}
+% \usetheme[faculty=fi]{fibeamer}
+\usetheme{CambridgeUS}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[czech]{babel}
+\usepackage{lmodern}
+\usepackage{hyperref}
+\usepackage{minted}
+%\usemintedstyle{manni}
+\title{POSIX, Make, CMake}
+\author{Miroslav Jaroš}
+\subject{Úvod do nízkoúrovňového programování}
+\institute[PB071]{PB071 Úvod do nízkoúrovňového programovnání}
+
+\AtBeginSection[]{
+    \begin{frame}
+        \vfill
+        \centering
+        \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+            \usebeamerfont{title}\insertsectionhead\par%
+        \end{beamercolorbox}
+        \vfill
+    \end{frame}
+}
+
+\newmintinline{c}{}
+
+\begin{document}
+\frame{\titlepage}
+
+\begin{frame}
+    \frametitle{Obsah}
+    \tableofcontents
+\end{frame}
+
+\section{POSIX}
+\subsection{Proč POSIX}
+\small
+\begin{frame}{Motivace}
+    \framesubtitle{Proč se zabývat operačním systémem?}
+    \begin{columns}
+        \begin{column}{0.74 \linewidth}
+            \begin{itemize}
+                \item Standardní knihovna přináší programátorovi základní funkci pro práci s prostředky počítače
+                \item Nicméně kdykoliv program potřebuje interagovat s hw musí požádat OS o zpřístupnění
+                    \begin{itemize}
+                        \item Práce se soubory
+                        \item Požadavek na naalokování stránky do virtuální paměti
+                        \item Spuštění podprocesu v shellu
+                        \item Řízení vláken (od C11)
+                    \end{itemize}
+                \item Jak standardní knihovna zvládá toto všechno implementovat?
+            \end{itemize}
+        \end{column}\hfill
+        \begin{column}{0.24\linewidth}
+            \includegraphics[width=1.0\textwidth]{pictures/square_bob.jpeg}
+        \end{column}
+    \end{columns}
+\end{frame}
+\begin{frame}{Motivace}
+    \begin{center}
+        \includegraphics[height=0.7\textheight]{pictures/grumpy.jpeg}
+    \end{center}
+\end{frame}
+\begin{frame}{Historie}
+    \framesubtitle{Aneb od UNIXu ke standardu}
+    \begin{itemize}
+        \item \texttt{POSIX -- Portable Operating System Interface}
+        \item Norma pro rozhraní operačního systému založená na operačním systému \texttt{UNIX}
+            \begin{itemize}
+                \item UNIX vznikl roku 1971 a již roku 1973 byl přepsán do jazyka C
+                \item Jeho autoři jsou Dennis M. Ritchie a Ken Thompson
+            \end{itemize}
+        \item Součástí normy POSIX je knihovna pro jazyk C -- \texttt{POSIX C Library}, která definuje základní rozhraní operačního systému
+        \item Pro použivání ochrané známky UNIX musí operační systém plně implementovat normu POSIX a být certifikovaný podle Single Unix Specification
+            \begin{itemize}
+                \item Např. macOS je certifikovaný UNIX
+                \item Linux není
+            \end{itemize}
+        \item Nicméně většina \texttt{UNIX-like} (nebo také UN*X) systémů jej dodržuje (s~odchylkami)
+    \end{itemize}
+\end{frame}
+\subsection{POSIX C Library}
+\begin{frame}{POSIX C Library}
+    \framesubtitle{API operačního systému}
+    \begin{itemize}
+        \item Zpřistupňuje funkce pro interakci s operačním systémem
+        \item Snaží se o vytvoření API kompatibilního se standardní knihovnou C, která je její součástí
+        \item Pokrývá širokou škálu služeb jádra poskytovaných programům
+            \begin{itemize}
+                \item Správa procesů (start, komunikace, ukončení)
+                \item Přístup k souborovému systému, síťovému rozhraní, pipes
+                \item Správa a synchronizace vláken (spouštění, vyloučení přistupu, semafory \ldots)
+                \item Správa virtuální paměti procesu (mapování stránek, dealokace \ldots)
+                \item A mnoho dalších \ldots
+            \end{itemize}
+        \item Tím umožňuje psaní ``přenositelných'' programů s daleko širším záběrem, než má standardní knihovna
+    \end{itemize}
+\end{frame}
+\begin{frame}{Kompatibilita}
+    \begin{itemize}
+        \item \texttt{UN*X} systémy (Linux, macOS, Solaris \ldots)
+            \begin{itemize}
+                \item Pokud je systém certifikován jako UNIX, potom splňuje POSIX
+                \item Linux jej s minimálními odchylkami splňuje taktéž
+            \end{itemize}
+        \item{Windows}
+            \begin{itemize}
+                \item Má vlastní API operačního systému \texttt{Win32} a \texttt{WinRT}
+                \item Nicméně části POSIX implementuje, ale ne plně
+                \item MinGW a Cygwin implementuji POSIX prostředí pomocí \texttt{Win32} API
+                \item Od Windows 10 obsahuje \texttt{Windows Subsystem for Linux}
+                    \begin{itemize}
+                        \item Emuluje rozhraní Linuxu, pro běh linuxových aplikací
+                        \item Pro instalaci a další zrdoje viz tutorial
+                        \item \url{https://www.fi.muni.cz/pb071/tutorials/ubuntu-on-windows/index.html}
+                    \end{itemize}
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+\subsection{Adresáře a soubory}
+\begin{frame}{Práce se soubory}
+    \begin{itemize}
+        \item Velice podobná jako ve standardní knihovně
+        \item Místo struktury \cinline{FILE *} se používá \texttt{file deskriptor}, který je typu \cinline{int}
+        \item \mintinline{c}{int open(const char *path, int oflag, ...);}
+        \item \mintinline{c}{int close(int fd);}
+        \item \mintinline{c}{ssize_t read(int fildes, void *buf, size_t nbyte);}
+        \item \mintinline{c}{ssize_t write(int fildes, const void *buf, size_t nbyte);}
+        \item \cinline{ssize_t} je rozšírení typu \cinline{size_t} o záporná čísla
+        \item Manuálové stránky těchto funkcí dle POSIX \mintinline{bash}{man 3 $JMENO_FUNKCE} 
+    \end{itemize}
+\end{frame}
+\begin{frame}{Adresáře}
+    \begin{itemize}
+        \item Adresář je specifická entita v rámci file systému a její formát na něm záleží
+        \item Stejně jako u souborů (jimiž ve skutečnosti většinou i bývají) je práce s nimi 
+            programátorovi zpřístupněna operačním systémem
+        \item Pro práci s adresáři se používá kombinace funkcí \texttt{opendir}, \texttt{readdir} a \texttt{closedir}
+        \item \cinline{DIR *opendir(const char *name);}
+            \begin{itemize}
+                \item Vrací ukazatel na \texttt{DIR}, což je reprezentace otevřeného adresáře pro OS
+            \end{itemize}
+        \item \cinline{struct dirent *readdir(DIR *dirp);}
+            \begin{itemize}
+                \item Přečte další položku v adresáři
+                \item Pokud v adresáři není žádný další prvek, vrací \texttt{NULL}
+            \end{itemize}
+        \item \cinline{int closedir(DIR *dirp);}
+            \begin{itemize}
+                \item Ukončuje práci s adresářem a uvolňuje zdroje
+                \item I zde platí stejně jako u \texttt{fopen} nebo \texttt{malloc}, že pokud funkce \texttt{opendir} neselhala, musí být
+                    nad její návratovou hodnotou zavolána funkce \texttt{closedir}
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+\begin{frame}[fragile]{Adresáře II.}
+    Po zavolání funkce \texttt{readdir} je vrácena \texttt{struct dirent *} 
+    \begin{minted}[fontsize=\tiny]{c}
+struct dirent {
+       ino_t          d_ino;       /* Inode number */
+       off_t          d_off;       /* Not an offset; see below */
+       unsigned short d_reclen;    /* Length of this record */
+       unsigned char  d_type;      /* Type of file; not supported
+                                      by all filesystem types */
+       char           d_name[256]; /* Null-terminated filename */
+};
+    \end{minted}
+    \begin{itemize}
+        \item Položka \texttt{d\_name} obsahuje jméno prvku ve složce, ale ne cestu, ta musí být zrekonstruována jiným způsobem
+        \item Položka \texttt{d\_type} může obsahovat typ prvku, ale v závislosti na použitém file systemu také nemusí
+        \item Pro zjištění typu lze \texttt{d\_type} testovat proti konstantám
+            \begin{itemize}
+                \item \texttt{DT\_REG} běžný soubor
+                \item \texttt{DT\_DIR} adresář
+                \item \texttt{DT\_UNKNOWN} File system nepodporuje \texttt{d\_type} a typ je potřeba zjistit jinak, například voláním \texttt{lstat}
+                \item A dalším (viz \texttt{man 3 readdir})
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+\begin{frame}[fragile]{Procházení adresáře}
+    \begin{minted}[fontsize=\footnotesize]{c}
+void PosixPrintFiles(const char* path) {
+    DIR *dir = NULL;
+    if ((dir = opendir(path))) { // connect to directory
+        struct dirent *dirEntry = NULL;
+        while ((dirEntry = readdir(dir)) != NULL) {// obtain next item
+          printf("File %s\n", dirEntry->d_name); // get name
+        }
+    closedir(dir); // finish work with directory
+  }
+}
+    \end{minted}
+\end{frame}
+\subsection{Procesy a vlákna}
+\begin{frame}{Procesy}
+    \begin{itemize}
+        \item Proces je v OS jednotka pro běh samostatného programu s vlastní oddělenou pamětí
+        \item V rámci POSIX má proces všechny zdroje (pokud nejsou sdílené) alokované pro vlastní použití (například file deskriptory)
+        \item V rámcí standardní knihovny existuje funkce \texttt{system}, která spouští shell v novém procesu a blokuje rodičovský proces,
+            dokud potomek neskončí
+            \begin{itemize}
+                \item V Linuxu je tato funkce implementována, jako sekvence volání \texttt{fork(2), execl(3) a waitpid(3)}
+            \end{itemize}
+        \item Spuštění nového procesu \cinline{pid_t fork(void);}
+            \begin{itemize}
+                \item Vytváří nový proces zkopírováním celé virtuální paměti rodičovského procesu.
+                \item Oba procesy, jak rodič tak potomek, pokračují ve vykonávání instrukcí na následujícím řádku po volání fork
+                \item Zda je proces rodič nebo potomek, lze zjistit pomocí návratové hodnoty fork
+            \end{itemize}
+
+    \end{itemize}
+\end{frame}
+\begin{frame}{Procesy II.}
+    \begin{itemize}
+        \item Rodina funkcí \texttt{exec(3)}
+            \begin{itemize}
+                \item Spouští předaný program nahrazením kódu běžicího procesu kódem programu předaného funkci
+                \item Volání pouze nahrazuje výkonný kód procesu, ale nemění zdroje alokované u OS (např. tabulka file descriptorů)
+            \end{itemize}
+        \item Funkce \texttt{popen(3)}
+            \begin{itemize}
+                \item \cinline{FILE *popen(const char *command, const char *type);}
+                \item Narozdíl od funkce system spouští proces asynchroně, tedy bez blokování rodiče
+                \item Návratová hodnota funkce je rourou pro komunikaci s procesem
+                \item Může být pouze pro čtení nebo zápis, nikoliv obojí
+                \item Po skončení práce s procesem musí být nad nárvatovou hodnotou funkce \texttt{pclose}, nikoliv \texttt{fclose} 
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+\begin{frame}{Vlákna}
+    \begin{itemize}
+        \item Vlákna umožňují procesu vykonávat několik paralelních činností zároveň
+        \item Zároveň ale všechna vlákna mezi sebou sdílí prostředky (například paměť)
+        \item Což může přinášet problémy -> souběh, uváznutí a další
+        \item Podpora pro vlákna je implementována v knihovně \texttt{pthread}
+        \item Umožňuje vlákna spouštět, nebo plánovat jejich odstranění
+        \item Zároveň obsahuje techniky pro synchronizaci vláken
+            \begin{itemize}
+                \item Mutexy 
+                \item Conditional variable
+            \end{itemize}
+        \item Více o vláknech se dozvíte na předmětu v předmětech PB152 nebo PB153
+    \end{itemize}
+Více o těchto funkcích v doplňkových materiálech od Šimona Totha
+\end{frame}
+%\begin{frame}{Souborový systém}
+\section{Make, CMake}
+\section{Závěr}
+\begin{frame}{Závěr}
+    \begin{itemize}
+        \item Nebojte se Operačních systémů ani jejich API
+        \item Dávají vám do rukou silné zbraně při programování
+        \item Používejte manuálové stránky
+        \item A hlavně: Nepiště si vlastní nástroje pro sestavování projektů!
+    \end{itemize}
+\end{frame}
+\begin{frame}
+    \huge Děkuji za pozornost
+\end{frame}
+\end{document}
+
