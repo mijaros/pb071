@@ -29,7 +29,7 @@ Program bude akceptovat přepínače
 
 Pravidla pro program jsou následující:
 * pokud není předán parametr `-o`, potom se vypisuje na __standardní výstup__
-* pokud je předán parametr `-p` nebo `-s`, potom musí být přepínač `-i` zadán předně dvakrát
+* pokud je předán parametr `-p` nebo `-s`, potom musí být přepínač `-i` zadán přesně dvakrát
 * pokud je předán parametr `-t` nebo `-n` potom musí být přepínač `-i` právě jednou
 
 ### Formát souboru
