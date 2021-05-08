@@ -1,10 +1,17 @@
-\documentclass{beamer}
+\documentclass[handout]{beamer}
+%\documentclass{beamer}
 % \usetheme[faculty=fi]{fibeamer}
 \usetheme{CambridgeUS}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage[czech]{babel}
+%%\usepackage[T1]{fontenc}
+\usepackage{fontspec}
+%%\setmainfont{FreeSerif}
+\usepackage{fontawesome}
+\usepackage{polyglossia}
+\setmainlanguage{czech}
 \usepackage{lmodern}
+\usepackage{xunicode}
+\usepackage{xltxtra}
+%%\usepackage[czech]{babel}
 \usepackage{hyperref}
 \usepackage{minted}
 %\usemintedstyle{manni}
@@ -12,6 +19,8 @@
 \author{Miroslav Jaroš}
 \subject{Úvod do nízkoúrovňového programování}
 \institute[PB071]{PB071 Úvod do nízkoúrovňového programovnání}
+
+%%\newfontfamily{\FA}{FontAwesome}
 
 \AtBeginSection[]{
     \begin{frame}
@@ -27,6 +36,7 @@
 \newmintinline{c}{}
 
 \begin{document}
+
 \frame{\titlepage}
 
 \begin{frame}
@@ -42,18 +52,18 @@
     \begin{columns}
         \begin{column}{0.74 \linewidth}
             \begin{itemize}
-                \item Standardní knihovna přináší programátorovi základní funkci pro práci s prostředky počítače
-                \item Nicméně kdykoliv program potřebuje interagovat s hw musí požádat OS o zpřístupnění
+                \item<1-> Standardní knihovna přináší programátorovi základní funkce pro práci s prostředky počítače.
+                \item<2-> Nicméně kdykoliv program potřebuje interagovat s hw musí požádat OS o zpřístupnění:
                     \begin{itemize}
-                        \item Práce se soubory
-                        \item Požadavek na naalokování stránky do virtuální paměti
-                        \item Spuštění podprocesu v shellu
-                        \item Řízení vláken (od C11)
+                        \item<3-> Práce se soubory,
+                        \item<4-> Požadavek na naalokování stránky do virtuální paměti,
+                        \item<5-> Spuštění podprocesu v shellu,
+                        \item<6-> Řízení vláken (od C11).
                     \end{itemize}
-                \item Jak standardní knihovna zvládá toto všechno implementovat?
+                \item<7-> Jak standardní knihovna zvládá toto všechno implementovat?
             \end{itemize}
         \end{column}\hfill
-        \begin{column}{0.24\linewidth}
+        \begin{column}{0.24\linewidth}<8->
             \includegraphics[width=1.0\textwidth]{pictures/square_bob.jpeg}
         \end{column}
     \end{columns}
@@ -67,96 +77,129 @@
     \framesubtitle{Aneb od UNIXu ke standardu}
     \begin{itemize}
         \item \texttt{POSIX -- Portable Operating System Interface}
-        \item Norma pro rozhraní operačního systému založená na operačním systému \texttt{UNIX}
+        \item Norma pro rozhraní operačního systému založená na operačním systému \texttt{UNIX}.
             \begin{itemize}
-                \item UNIX vznikl roku 1971 a již roku 1973 byl přepsán do jazyka C
-                \item Jeho autoři jsou Dennis M. Ritchie a Ken Thompson
+                \item UNIX vznikl roku 1971 a již roku 1973 byl přepsán do jazyka C.
+                \item Jeho autoři jsou Dennis M. Ritchie a Ken Thompson.
             \end{itemize}
-        \item Součástí normy POSIX je knihovna pro jazyk C -- \texttt{POSIX C Library}, která definuje základní rozhraní operačního systému
-        \item Pro použivání ochrané známky UNIX musí operační systém plně implementovat normu POSIX a být certifikovaný podle Single Unix Specification
+        \item Součástí normy POSIX je knihovna pro jazyk C -- \texttt{POSIX C Library}, která definuje základní rozhraní operačního systému.
+        \item Pro použivání ochrané známky UNIX musí operační systém plně implementovat normu POSIX a být certifikovaný podle Single Unix Specification.
             \begin{itemize}
-                \item Např. macOS je certifikovaný UNIX
-                \item Linux není
+                \item Např. macOS je certifikovaný UNIX.
+                \item Linux není.
             \end{itemize}
-        \item Nicméně většina \texttt{UNIX-like} (nebo také UN*X) systémů jej dodržuje (s~odchylkami)
+        \item Nicméně většina \texttt{UNIX-like} (nebo také UN*X) systémů jej dodržuje (s~odchylkami).
     \end{itemize}
 \end{frame}
 \subsection{POSIX C Library}
 \begin{frame}{POSIX C Library}
     \framesubtitle{API operačního systému}
     \begin{itemize}
-        \item Zpřistupňuje funkce pro interakci s operačním systémem
-        \item Snaží se o vytvoření API kompatibilního se standardní knihovnou C, která je její součástí
-        \item Pokrývá širokou škálu služeb jádra poskytovaných programům
+        \item Zpřistupňuje funkce pro interakci s operačním systémem.
+        \item Snaží se o vytvoření API kompatibilního se standardní knihovnou C, která je její součástí.
+        \item Pokrývá širokou škálu služeb jádra poskytovaných programům:
             \begin{itemize}
-                \item Správa procesů (start, komunikace, ukončení)
-                \item Přístup k souborovému systému, síťovému rozhraní, pipes
-                \item Správa a synchronizace vláken (spouštění, vyloučení přistupu, semafory \ldots)
-                \item Správa virtuální paměti procesu (mapování stránek, dealokace \ldots)
+                \item Správa procesů (start, komunikace, ukončení);
+                \item Přístup k souborovému systému, síťovému rozhraní, roury;
+                \item Správa a synchronizace vláken (spouštění, vyloučení přistupu, semafory \ldots);
+                \item Správa virtuální paměti procesu (mapování stránek, dealokace \ldots);
                 \item A mnoho dalších \ldots
             \end{itemize}
-        \item Tím umožňuje psaní ``přenositelných'' programů s daleko širším záběrem, než má standardní knihovna
+        \item Tím umožňuje psaní ``přenositelných'' programů s daleko širším záběrem, než má standardní knihovna.
     \end{itemize}
 \end{frame}
 \begin{frame}{Kompatibilita}
     \begin{itemize}
         \item \texttt{UN*X} systémy (Linux, macOS, Solaris \ldots)
             \begin{itemize}
-                \item Pokud je systém certifikován jako UNIX, potom splňuje POSIX
-                \item Linux jej s minimálními odchylkami splňuje taktéž
+                \item Pokud je systém certifikován jako UNIX, potom splňuje POSIX.
+                \item Linux jej s minimálními odchylkami splňuje taktéž.
             \end{itemize}
         \item{Windows}
             \begin{itemize}
-                \item Má vlastní API operačního systému \texttt{Win32} a \texttt{WinRT}
-                \item Nicméně části POSIX implementuje, ale ne plně
-                \item MinGW a Cygwin implementuji POSIX prostředí pomocí \texttt{Win32} API
-                \item Od Windows 10 obsahuje \texttt{Windows Subsystem for Linux}
+                \item Má vlastní API operačního systému \texttt{Win32} a \texttt{WinRT}.
+                \item Nicméně části POSIX implementuje, ale ne plně.
+                \item MinGW a Cygwin implementuji POSIX prostředí pomocí \texttt{Win32} API.
+                \item Od Windows 10 obsahuje \texttt{Windows Subsystem for Linux}.
                     \begin{itemize}
-                        \item Emuluje rozhraní Linuxu, pro běh linuxových aplikací
-                        \item Pro instalaci a další zrdoje viz tutorial
+                        \item Emuluje rozhraní Linuxu, pro běh linuxových aplikací.
+                        \item Pro instalaci a další zdroje viz tutorial.
                         \item \url{https://www.fi.muni.cz/pb071/tutorials/ubuntu-on-windows/index.html}
                     \end{itemize}
             \end{itemize}
     \end{itemize}
 \end{frame}
 \subsection{Adresáře a soubory}
+\begin{frame}[allowframebreaks,fragile]{Souborový systém}
+    \begin{itemize}
+        \item V UNIX-like systémech je souborový systém implementován jako n-ární strom s jedním kořenem.
+        \item Všechny svazky (jiné disky, síťová úložište, ale i zařízení) jsou v něm adresovány - \texttt{mount}.
+        \item Kořen souborového systému se jmenuje \texttt{/}.
+        \item Soubory jsou implementovány pomocí \texttt{inode} (i-uzel).
+        \begin{itemize}
+            \item \texttt{inode} je datová struktura popisující objekt existující v souborovém systému.
+                \item Váží se na něj všechny atributy souboru, jako velikost, oprávnění, datum vytvoření, modifikace atd.
+                \item \texttt{inode} nicméně neobsahuje informaci o tom, jak se daný soubor jmenuje, nebo kde se ve FS nachází.
+            \end{itemize}
+        \item Vazba mezi jménem souboru a jeho \texttt{inode} je implementována na úrovni adresáře.
+                \item Pro získání informací o souboru se používají funkce \texttt{stat, fstat, lstat}.
+                \item \cinline[fontsize=\footnotesize]{ int stat(const char *path, struct stat *buf);}
+                \item Při úspěchu je \cinline{struct stat} naplněna informacemi o souboru.
+                \item Více viz \mintinline{bash}{man 3 stat}.
+    \end{itemize}
+%%    \framebreak
+\begin{minted}[fontsize=\footnotesize]{c}
+struct stat {
+    dev_t     st_dev;         /* ID of device containing file */
+    ino_t     st_ino;         /* Inode number */
+    mode_t    st_mode;        /* File type and mode */
+    nlink_t   st_nlink;       /* Number of hard links */
+    uid_t     st_uid;         /* User ID of owner */
+    gid_t     st_gid;         /* Group ID of owner */
+    dev_t     st_rdev;        /* Device ID (if special file) */
+    off_t     st_size;        /* Total size, in bytes */
+    blksize_t st_blksize;     /* Block size for filesystem I/O */
+    blkcnt_t  st_blocks;      /* Number of 512B blocks allocated */
+}
+\end{minted}
+\end{frame}
 \begin{frame}{Práce se soubory}
     \begin{itemize}
-        \item Velice podobná jako ve standardní knihovně
-        \item Místo struktury \cinline{FILE *} se používá \texttt{file deskriptor}, který je typu \cinline{int}
+        \item Velice podobná jako ve standardní knihovně.
+        \item Místo struktury \cinline{FILE *} se používá \texttt{file deskriptor}, který je typu \cinline{int}.
         \item \mintinline{c}{int open(const char *path, int oflag, ...);}
         \item \mintinline{c}{int close(int fd);}
         \item \mintinline{c}{ssize_t read(int fildes, void *buf, size_t nbyte);}
         \item \mintinline{c}{ssize_t write(int fildes, const void *buf, size_t nbyte);}
-        \item \cinline{ssize_t} je rozšírení typu \cinline{size_t} o záporná čísla
-        \item Manuálové stránky těchto funkcí dle POSIX \mintinline{bash}{man 3 $JMENO_FUNKCE} 
+        \item \cinline{ssize_t} je rozšírení typu \cinline{size_t} o záporná čísla.
+        \item Manuálové stránky těchto funkcí dle POSIX \mintinline{bash}{man 3 $JMENO_FUNKCE}.
     \end{itemize}
 \end{frame}
 \begin{frame}{Adresáře}
     \begin{itemize}
-        \item Adresář je specifická entita v rámci file systému a její formát na něm záleží
-        \item Stejně jako u souborů (jimiž ve skutečnosti většinou i bývají) je práce s nimi 
-            programátorovi zpřístupněna operačním systémem
-        \item Pro práci s adresáři se používá kombinace funkcí \texttt{opendir}, \texttt{readdir} a \texttt{closedir}
+        \item Adresář je specifická entita v rámci souborových systému a jeho formát na souborovém systému záleží.
+        \item Stejně jako u souborů (jimiž ve skutečnosti většinou i bývají) je práce s nimi
+            programátorovi zpřístupněna operačním systémem.
+        \item Pro práci s adresáři se používá kombinace funkcí \texttt{opendir}, \texttt{readdir} a \texttt{closedir}.
         \item \cinline{DIR *opendir(const char *name);}
             \begin{itemize}
-                \item Vrací ukazatel na \texttt{DIR}, což je reprezentace otevřeného adresáře pro OS
+                \item Vrací ukazatel na \texttt{DIR}, což je reprezentace otevřeného adresáře pro OS.
             \end{itemize}
         \item \cinline{struct dirent *readdir(DIR *dirp);}
             \begin{itemize}
-                \item Přečte další položku v adresáři
-                \item Pokud v adresáři není žádný další prvek, vrací \texttt{NULL}
+                \item Přečte další položku v adresáři.
+                \item Pokud v adresáři není žádný další prvek, vrací \texttt{NULL}.
             \end{itemize}
         \item \cinline{int closedir(DIR *dirp);}
             \begin{itemize}
-                \item Ukončuje práci s adresářem a uvolňuje zdroje
+                \item Ukončuje práci s adresářem a uvolňuje zdroje.
                 \item I zde platí stejně jako u \texttt{fopen} nebo \texttt{malloc}, že pokud funkce \texttt{opendir} neselhala, musí být
-                    nad její návratovou hodnotou zavolána funkce \texttt{closedir}
+                    nad její návratovou hodnotou zavolána funkce \texttt{closedir}.
             \end{itemize}
     \end{itemize}
 \end{frame}
 \begin{frame}[fragile]{Adresáře II.}
-    Po zavolání funkce \texttt{readdir} je vrácena \texttt{struct dirent *} 
+    Po zavolání funkce \texttt{readdir} je vrácena \texttt{struct dirent *}.
     \begin{minted}[fontsize=\tiny]{c}
 struct dirent {
        ino_t          d_ino;       /* Inode number */
@@ -168,46 +211,49 @@ struct dirent {
 };
     \end{minted}
     \begin{itemize}
-        \item Položka \texttt{d\_name} obsahuje jméno prvku ve složce, ale ne cestu, ta musí být zrekonstruována jiným způsobem
-        \item Položka \texttt{d\_type} může obsahovat typ prvku, ale v závislosti na použitém file systemu také nemusí
-        \item Pro zjištění typu lze \texttt{d\_type} testovat proti konstantám
+        \item Položka \texttt{d\_name} obsahuje jméno prvku ve složce, ale ne cestu, ta musí být zrekonstruována jiným způsobem.
+        \item Položka \texttt{d\_type} může obsahovat typ prvku, ale v závislosti na použitém souborovém systému také nemusí.
+        \item Pro zjištění typu lze \texttt{d\_type} testovat proti konstantám:
             \begin{itemize}
-                \item \texttt{DT\_REG} běžný soubor
-                \item \texttt{DT\_DIR} adresář
-                \item \texttt{DT\_UNKNOWN} File system nepodporuje \texttt{d\_type} a typ je potřeba zjistit jinak, například voláním \texttt{lstat}
-                \item A dalším (viz \texttt{man 3 readdir})
+                \item \texttt{DT\_REG} běžný soubor,
+                \item \texttt{DT\_DIR} adresář,
+                \item \texttt{DT\_UNKNOWN} File system nepodporuje \texttt{d\_type} a typ je potřeba zjistit jinak, například voláním \texttt{lstat},
+                \item A dalším (viz \texttt{man 3 readdir}).
             \end{itemize}
     \end{itemize}
 \end{frame}
 \begin{frame}[fragile]{Procházení adresáře}
+    \begin{listing}[H]
     \begin{minted}[fontsize=\footnotesize]{c}
-void PosixPrintFiles(const char* path) {
+void posix_print_files(const char *path) {
     DIR *dir = NULL;
-    if ((dir = opendir(path))) { // connect to directory
-        struct dirent *dirEntry = NULL;
-        while ((dirEntry = readdir(dir)) != NULL) {// obtain next item
-          printf("File %s\n", dirEntry->d_name); // get name
+    if ((dir = opendir(path)) != NULL) { // connect to directory
+        struct dirent *dir_entry = NULL;
+        while ((dir_entry = readdir(dir)) != NULL) {// obtain next item
+            printf("File %s\n", dir_entry->d_name); // get name
         }
-    closedir(dir); // finish work with directory
-  }
+        closedir(dir); // finish work with directory
+    }
 }
     \end{minted}
+    \caption{Procházení FS, převzato a upraveno ze starší přednášky Šimona Totha}
+\end{listing}
 \end{frame}
 \subsection{Procesy a vlákna}
 \begin{frame}{Procesy}
     \begin{itemize}
-        \item Proces je v OS jednotka pro běh samostatného programu s vlastní oddělenou pamětí
-        \item V rámci POSIX má proces všechny zdroje (pokud nejsou sdílené) alokované pro vlastní použití (například file deskriptory)
+        \item Proces je v OS jednotka pro běh samostatného programu s vlastní oddělenou pamětí.
+        \item V rámci POSIX má proces všechny zdroje (pokud nejsou sdílené) alokované pro vlastní použití (například file deskriptory).
         \item V rámcí standardní knihovny existuje funkce \texttt{system}, která spouští shell v novém procesu a blokuje rodičovský proces,
-            dokud potomek neskončí
+            dokud potomek neskončí.
             \begin{itemize}
-                \item V Linuxu je tato funkce implementována, jako sekvence volání \texttt{fork(2), execl(3) a waitpid(3)}
+                    \item V Linuxu je tato funkce implementována jako sekvence volání \texttt{fork(2), execl(3) a waitpid(3)}.
             \end{itemize}
         \item Spuštění nového procesu \cinline{pid_t fork(void);}
             \begin{itemize}
                 \item Vytváří nový proces zkopírováním celé virtuální paměti rodičovského procesu.
-                \item Oba procesy, jak rodič tak potomek, pokračují ve vykonávání instrukcí na následujícím řádku po volání fork
-                \item Zda je proces rodič nebo potomek, lze zjistit pomocí návratové hodnoty fork
+                \item Oba procesy, jak rodič tak potomek, pokračují ve vykonávání instrukcí na následujícím řádku po volání fork.
+                \item Zda je proces rodič nebo potomek, lze zjistit pomocí návratové hodnoty fork.
             \end{itemize}
 
     \end{itemize}
@@ -216,45 +262,223 @@ void PosixPrintFiles(const char* path) {
     \begin{itemize}
         \item Rodina funkcí \texttt{exec(3)}
             \begin{itemize}
-                \item Spouští předaný program nahrazením kódu běžicího procesu kódem programu předaného funkci
-                \item Volání pouze nahrazuje výkonný kód procesu, ale nemění zdroje alokované u OS (např. tabulka file descriptorů)
+                \item Spouští předaný program nahrazením kódu běžícího procesu kódem programu předaného funkci.
+                \item Volání pouze nahrazuje výkonný kód procesu, ale nemění zdroje alokované u OS (např. tabulka file descriptorů).
+                \item \cinline[fontsize=\scriptsize]{int execve(const char *path, char *const argv[], char *const envp[]);}
             \end{itemize}
         \item Funkce \texttt{popen(3)}
             \begin{itemize}
                 \item \cinline{FILE *popen(const char *command, const char *type);}
-                \item Narozdíl od funkce system spouští proces asynchroně, tedy bez blokování rodiče
-                \item Návratová hodnota funkce je rourou pro komunikaci s procesem
-                \item Může být pouze pro čtení nebo zápis, nikoliv obojí
-                \item Po skončení práce s procesem musí být nad nárvatovou hodnotou funkce \texttt{pclose}, nikoliv \texttt{fclose} 
+                \item Narozdíl od funkce system spouští proces asynchronně, tedy bez blokování rodiče.
+                \item Návratová hodnota funkce je rourou pro komunikaci s procesem.
+                \item Může být pouze pro čtení nebo zápis, nikoliv obojí.
+                \item Po skončení práce s procesem musí být nad návratovou hodnotou funkce zavoláno \texttt{pclose}, nikoliv \texttt{fclose}.
             \end{itemize}
     \end{itemize}
 \end{frame}
 \begin{frame}{Vlákna}
     \begin{itemize}
-        \item Vlákna umožňují procesu vykonávat několik paralelních činností zároveň
-        \item Zároveň ale všechna vlákna mezi sebou sdílí prostředky (například paměť)
-        \item Což může přinášet problémy -> souběh, uváznutí a další
-        \item Podpora pro vlákna je implementována v knihovně \texttt{pthread}
-        \item Umožňuje vlákna spouštět, nebo plánovat jejich odstranění
-        \item Zároveň obsahuje techniky pro synchronizaci vláken
+        \item Vlákna umožňují procesu vykonávat několik paralelních činností zároveň.
+        \item Zároveň ale všechna vlákna mezi sebou sdílí prostředky (například paměť).
+        \item Což může přinášet problémy \faLongArrowRight $\,$ souběh, uváznutí a další.
+        \item Podpora pro vlákna je implementována v knihovně \texttt{pthread}.
+        \item Umožňuje vlákna spouštět, nebo plánovat jejich odstranění.
+        \item Zároveň obsahuje techniky pro synchronizaci vláken:
             \begin{itemize}
-                \item Mutexy 
-                \item Conditional variable
+                \item Mutexy,
+                \item Conditional variable.
             \end{itemize}
-        \item Více o vláknech se dozvíte na předmětu v předmětech PB152 nebo PB153
+        \item Více o vláknech se dozvíte v předmětech PB152 nebo PB153
     \end{itemize}
-Více o těchto funkcích v doplňkových materiálech od Šimona Totha
+    Více o těchto funkcích například ve slidech PB065 \cite{kas}.
 \end{frame}
 %\begin{frame}{Souborový systém}
 \section{Make, CMake}
+\begin{frame}{Překládání projektů}
+    \begin{itemize}
+        \item Prozatím jste se v tomto předmětu setkali s jednoduchými prográmky s jednotkami
+            překladových jednotek, které šlo přeložit jedním příkazem.
+        \item \mintinline{bash}{gcc -std=c99 -Wall -Wextra -pedantic -Werror *.c}
+        \item<2-> Tento přístup lze aplikovat na jednoduché programy, které se přeloží okamžitě.
+        \item<3-> Co ale s projekty, které obsahují tisíce řádků zdrojového kódu ve stovkách souborů.
+        \begin{itemize}
+            \item<4-> I malá změna v jednom zdrojovém souboru znamená překompilování všech zdrojových souborů.
+            \item<4-> Což pro velké projekty trvá opravdu dlouho (linux cca 20 minut, gcc cca 1.5 hodiny).
+        \end{itemize}
+        \item<5-> Jak reagovat na případy, kdy potřebujeme více spustitelných souborů?
+            \begin{itemize}
+                \item<6-> Systémový démon a jeho CLI.
+                \item<6-> Klient server aplikace.
+            \end{itemize}
+        \item<6-> A co závislosti? Kde najdeme knihovny, jak se jmenuji?
+    \end{itemize}
+\end{frame}
+\begin{frame}{Překládání projektů II - Přístupy}
+    \begin{itemize}
+        \item Přímý překlad není moudrý, je nepřenositelný a těžko reprodukovatelný.
+        \item Trošku lepším řešením je napsat si nějakou vlastní automatizaci.
+            \begin{itemize}
+                \item Typicky ve forme skriptu.
+                \item Tento přístup možná vyřeší problém překladu více binárek a opakovatelnosti sestavení, ale!
+                \item Překládat pouze změněné překladové jednotky je poměrně těžké implementovat.
+                \item Pro vyřešení vztahů mezi zdrojovými soubory, bychom museli implementovat alespoň základní parser
+                    jazyka pro jejich pochopení.
+                \item A nezapomínejme na chyby.
+                \end{itemize}
+            \item Vůbec nejlepším řešením je použít nástroje k tomu určené.
+    \end{itemize}
+\end{frame}
+\subsection{make}
+\begin{frame}[allowframebreaks]{make}
+    \begin{itemize}
+        \item Nástroj na automatizaci sestavení.
+        \item Popis sestavení projektu se ukládá do \texttt{Makefile}.
+        \item Využívá rekurzivních pravidel pro vystavění stromu závislostí, který následně projde a nad každým cílem
+            vykoná požadovanou akci
+        \item Základním kamenem syntaxe je pravidlo \mintinline{make}{target: source1 source2}
+            \begin{itemize}
+                \item \texttt{target} cíl, typicky se jedná o produkovaný soubor (binárka, nebo mezilehlá překladová jednotka), případně jde o \texttt{phony} cíl (viz dále).
+                \item \texttt{source1 source2} zdrojové soubory, může jít o soubory vytvořené předchozím pravidlem (cíle jiného pravidla), nebo zdrojové soubory překládaného programu.
+            \end{itemize}
+        \item Akce se nad cílem vykoná, pokud: 
+            \begin{itemize}
+                \item cíl neexistuje a je potřeba jej vytvořit,
+                \item libovolný ze zdrojových souborů byl upraven po vytvoření cíle (datum modifikace zdrojového souboru je vyšší než datum modifikace cíle),
+                \item cíl je \texttt{phony}, tedy neprodukuje žádný soubor.
+            \end{itemize}
+        \item Spuštěním příkazu \texttt{make} se vyhledá soubor \texttt{Makefile} v lokálním adresáři.
+        \item Pravidlo, které se začne vykonávat je první nalezené.
+        \item Toto chování lze změnit explicitním zadáním očekávaného pravidla (\emph{např.} \texttt{make clean}).
+        \item Proměnné makefile lze nastavit na jiné hodnoty při spuštění \mintinline{bash}{make all CC=clang}.
+        \item Pro zrychlení překladu lze použít přepínač \texttt{-jN}, který překládá paralelně až \texttt{N} překladových jednotek.
+        \item \mintinline{bash}{make -j5 all}
+    \end{itemize}
+    \begin{figure}
+    \includegraphics[width=0.9\textwidth]{./pictures/dependencies.png}
+    \caption{\footnotesize Popis závislostí v projektu, zdroj: Jiří Slabý, přednáška PB071 z roku 2017}
+\end{figure}
+\end{frame}
+\begin{frame}[fragile]{Makefile}
+    \begin{itemize}
+        \item Základ syntaxe jsou příkazy \texttt{target: source1 source2}.
+        \item Pod touto deklarací jsou tabulátorem odsazené příkazy, které se mají provést.
+        \item Lze v něm deklarovat proměnné
+            \begin{itemize}
+                \item \texttt{VAR\_NAME=value}
+                \item A následně je odkazovat jako \texttt{\$(VAR\_NAME)}
+            \end{itemize}
+        \item Zobecnění pravidel (v GNU Make):
+            \begin{itemize}
+                \item Speciální znak \texttt{\%} je zástupným symbolem.
+                \item Lze jej použít pro konstrukci pravidel typu:
+                \item \mintinline{makefile}{%.o: %c}, které říká, že libovolné pravidlo, končící na .o, závisí na stejně se 
+                        jmenujícím pravidle končícím na .c
+                    \item Ke každému pravidlu potom náleží další speciální proměnné
+                    \begin{itemize}
+                        \item \texttt{\$@} je jméno cíle.
+                        \item \texttt{\$<} je první závislost.
+                        \item \texttt{\$\^} jsou všechny závislosti
+                    \end{itemize}
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+\begin{frame}[fragile]{Makefile II}
+
+    \begin{minted}{makefile}
+    CC=gcc
+    CFLAGS=-std=c99 -Wall -Wextra -pedantic -Werror
+
+    all: myprog
+
+    myprog: main.o test.o
+        $(CC) $(CFLAGS) $^ -o $@
+
+    %.o: %.c
+        $(CC) $(CFLAGS) -c -o $@ $^
+    
+    clean: 
+        rm -f *.o myprog
+
+    .PHONY: all clean
+    \end{minted}
+\end{frame}
+\subsection{Generátory}
+\begin{frame}{Generátory}
+    \begin{itemize}
+        \item \texttt{make} je silný nástroj pro popis sestavení projektu, nicméně neřeší všechny problémy.
+        \item Je nezbytné stále popisovat závislosti ručně. (Nebo si vypomáhat dodatečnými soubory třeba s pomocí \texttt{gcc -MM})
+        \item Má komplikovanou syntaxi a pro velké projekty již nedostačuje.
+        \item Je méně přenositelný a nemá přímou podporu pro ověření vlastností kompilátoru nebo existence knihoven.
+        \item Proto se pro větší projekty používají pokročílejší nástroje, které umí \texttt{Makefile} vygenerovat.
+    \end{itemize}
+\end{frame}
+\begin{frame}{Generátory II -- Autotools}
+    \begin{itemize}
+        \item Jeden z nejrozšířenějších nástrojů v UNIXovém světe.
+        \item Skládá se ze tří nástrojů:
+            \begin{itemize}
+                 \item Autoconf -- vyhledávání externích závislostí,
+                 \item Automake -- popis překladu (podadresáře, layout projektu),
+                \item Libtool -- podpora pro tvorbu knihoven.
+            \end{itemize}
+        \item Výsledkem je několik servisních souborů a jeden spustitelný skript \texttt{configure}.
+        \item Po jeho spuštění začne testování OS, zda a kde má potřebné závislosti.
+        \item Při úspěchu je vygenerován \texttt{Makefile}.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Generátory III -- CMake}
+    \begin{itemize}
+        \item Se \texttt{CMake} se všichni minimálně od vidění známe :-)
+        \item Základem konfigurace je jeden soubor \texttt{CMakeLists.txt}, který obsahuje popis projektu.
+        \item Podobně jako u \texttt{Autotools} jeho spuštění generuje (krom obrovské spousty servisních souborů) \texttt{Makefile}.
+        \item Ale neomezuje se pouze na ně, umí vygenerovat i projektové soubory pro \texttt{VisualStudio}, nebo \texttt{Ninja} build system.
+    \end{itemize}
+    \begin{listing}[H]
+    \begin{minted}{makefile}
+    cmake_minimum_required(VERSION 3.6)
+    project(hw04)
+     
+    set(SOURCE_FILES test.cpp) 
+    add_executable(hw04 ${SOURCE_FILES})
+    \end{minted}
+    \caption{Ukázka CMakeLists.txt}
+\end{listing}
+\end{frame}
+
 \section{Závěr}
 \begin{frame}{Závěr}
     \begin{itemize}
-        \item Nebojte se Operačních systémů ani jejich API
-        \item Dávají vám do rukou silné zbraně při programování
-        \item Používejte manuálové stránky
+        \item Nebojte se Operačních systémů ani jejich API.
+        \item Dávají vám do rukou silné zbraně při programování.
+        \item Používejte manuálové stránky.
         \item A hlavně: Nepiště si vlastní nástroje pro sestavování projektů!
     \end{itemize}
+\end{frame}
+\begin{frame}{Kam dál?}
+    \begin{itemize}
+        \item \texttt{PV004} UNIX
+        \item \texttt{PV065} UNIX -- programování a správa systému I
+        \item \texttt{PB173} Tematický vývoj aplikací v C/C++ (skupina zaměřená na POSIX)
+    \end{itemize}
+\end{frame}
+\begin{frame}
+  \frametitle<presentation>{Další zdroje}    
+  \begin{thebibliography}{10}    
+  \beamertemplatearticlebibitems
+  \bibitem{kas}
+    Jan Kasprzak.
+    \newblock {\em PV165 Unix programování a správa systému I}.
+    \newblock \url{https://www.fi.muni.cz/~kas/pv065/pv065.pdf}.
+  \beamertemplatearticlebibitems
+  \bibitem{Makefile}
+  Makefile reference
+  \newblock \url{https://www.gnu.org/software/make/manual/html_node/index.html}
+  \beamertemplatearticlebibitems
+  \bibitem{Jemand2000}
+  CMake tutorial
+      \newblock \url{https://cmake.org/cmake-tutorial/}
+    \end{thebibliography}
 \end{frame}
 \begin{frame}
     \huge Děkuji za pozornost
