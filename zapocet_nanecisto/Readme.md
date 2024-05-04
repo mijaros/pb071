@@ -27,7 +27,7 @@ s vaším učem a souborem do kterého chcete váš tajný vstup uložit.
 Následně dle postupu níže zpracujte soubor vytvořený funkcí `get_your_message`. Pokud byste měli nějaký problém, váš vstupní soubor
 Vám po prvním úspěšném volání `get_your_message` přijde na mail. 
 
-Potom co budete hotovi se zpracováním, zavolejte druhou knihovní funkci ve vašem programu na aise s vaší tajnou zprávou (viz níže) a dovíte se, zda jste našli správnou zprávu, nebo ne.
+Potom co budete hotovi se zpracováním, zavolejte druhou knihovní funkci ve vašem programu s vaší tajnou zprávou (viz níže) a dovíte se, zda jste uspěli, či ne.
 
 ## Steganografie
 
@@ -44,6 +44,10 @@ nicméně pro tento úkol potřebujete pouze pár informací:
 * Hlavička bitmapy obsahuje informaci o offsetu od začátku souboru, kde se nachází samotné pixely.
 * Offset je číslo o délce 4B v kódování little endian, které se nachází v souboru s bitmapou od 10. byte dále (offset 10).
 * Formát zprávy vám bude jasný, až jej uvidíte.
+* __Pamatujte!__ Délka zprávy v bitmapě je neznámá, tedy váš kód musí být schopný uložit zprávu libovolné délky (aniž by přitom
+  plýtval pamětí! Tedy řešení, které na začátku naalokuje obrovské množství paměti nebude akceptováno.
+* Z nalezené zprávy vás pro odeslání bude zajímat pouze její část, je akceptovatelné, pokud ji ručně předáte knihovní funkci na
+  verifikaci, ačkoliv by bylo lepší zprávu zpracovat.
 
 ### Příklad bitmapy
 ```
